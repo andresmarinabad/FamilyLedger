@@ -5,6 +5,7 @@ from difflib import get_close_matches
 from bs4 import BeautifulSoup
 from config import config
 
+EXCLUDE = ['Ahorro', 'Interno']
 
 def find_best_match(concept):
     translations = config.translations
@@ -55,12 +56,13 @@ def calculate_expenses(df):
     data = {}
     for _, row in df.iterrows():
         concept = row["Nota"]
+        if concept in EXCLUDE:
+            continue
         value = abs(float(row["Importe"].replace('.', '').replace(',', '.')))
         if concept not in data:
             data[concept] = value
         else:
             data[concept] = value + data[concept]
-    print(f'{data}')
 
     return pd.DataFrame(list(data.items()), columns=['Concepto', 'Importe'])
 
